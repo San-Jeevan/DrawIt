@@ -16,7 +16,6 @@ public class DrawView extends View {
 	Paint paint2 = new Paint();
 	Path path = new Path();
 
-
 	
 	public class CustomArrayList<Point> extends ArrayList<Point> {
 
@@ -58,12 +57,10 @@ public class DrawView extends View {
 					path.moveTo(point.x, point.y);
 					canvas.drawCircle(point.x, point.y, 3, paint2);
 				}
-				
 				else if (point.state == 1) {
 					path.moveTo(point.x, point.y);
 					canvas.drawCircle(point.x, point.y, 3, paint2);
 				}
-				
 				else 
 				path.lineTo(point.x, point.y);
 			}

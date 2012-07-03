@@ -26,6 +26,7 @@ public class DrawItActivity extends Activity {
 	final Messenger activityMessenger = new Messenger(new IncomingHandler());
 	private JSONObject jsonObject;
 	DrawView drawViewglobal;
+	OnTouchListener l;
 
 	
  
@@ -43,6 +44,13 @@ public class DrawItActivity extends Activity {
         	        point.y = jsonObject.getLong("y");
         	        point.state = jsonObject.getInt("type");
         	        drawViewglobal.addpoint(point);    
+	    		}
+	    		
+	    		else if (event.equals("connection")) {
+	    			boolean conn = msg.getData().getBoolean("value");
+	    			if (conn){ drawViewglobal.setOnTouchListener(l); Log.d("listener", "ON");}
+	    			else if (!conn) {drawViewglobal.setOnTouchListener(null); Log.d("listener", "OFF");}
+	    			
 	    		}
 				
 			} catch (JSONException e) {
@@ -76,7 +84,7 @@ public class DrawItActivity extends Activity {
         drawViewglobal = (DrawView) findViewById(R.id.DrawView);
         final DrawView drawView = drawViewglobal;
           
-         OnTouchListener l = new OnTouchListener() {
+          l = new OnTouchListener() {
         	 
         		@Override
         		public boolean onTouch(View v, MotionEvent event) {
@@ -94,7 +102,7 @@ public class DrawItActivity extends Activity {
         	        return true;
         		} };
          
-         drawView.setOnTouchListener(l);
+      //   drawView.setOnTouchListener(l);
     }
     
     @Override

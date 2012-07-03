@@ -293,8 +293,8 @@ class IOConnection implements IOCallback {
 				((HttpsURLConnection) connection)
 						.setSSLSocketFactory(sslSocketFactory);
 			}
-			connection.setConnectTimeout(connectTimeout);
-			connection.setReadTimeout(connectTimeout);
+			connection.setConnectTimeout(3000);
+			connection.setReadTimeout(3000);
 
 			/* Setting the request headers */
 			for (Entry<Object, Object> entry : headers.entrySet()) {

@@ -26,7 +26,6 @@ import io.socket.SocketIOException;
 public class DrawItService extends Service implements IOCallback {
 	private SocketIO socket;
 	private Messenger messenger = null;
-	private JSONObject jsonObject;
 	public boolean socketConnected = false;
 		
 	
@@ -37,6 +36,7 @@ public class DrawItService extends Service implements IOCallback {
 	    	NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 
 	    	if (networkInfo==null||!networkInfo.isConnected()) {
+	    		sendConnectionStatus(false);
 	    		socket.disconnect();
 	    		socketConnected=false;
 	    	}
@@ -70,7 +70,6 @@ public class DrawItService extends Service implements IOCallback {
 					"http://ec2-46-137-155-119.eu-west-1.compute.amazonaws.com:80",
 					this);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -78,7 +77,6 @@ public class DrawItService extends Service implements IOCallback {
 
 	@Override
 	public void onCreate() {
-		jsonObject = new JSONObject();
 		IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(mNetworkStateReceiver , mNetworkStateFilter);
 		super.onCreate();
@@ -90,6 +88,20 @@ public class DrawItService extends Service implements IOCallback {
 		}
 	}
 
+	public void sendConnectionStatus (Boolean status) {
+		Message msg = Message.obtain();
+		Bundle bdl = new Bundle();
+		bdl.putString("event", "connection");
+		bdl.putBoolean("value", status);
+		msg.setData(bdl);
+		try {
+			messenger.send(msg);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
@@ -125,14 +137,11 @@ public class DrawItService extends Service implements IOCallback {
 
 	@Override
 	public void onDisconnect() {
-		System.out.println("Connection terminated.");
 	}
 
 	@Override
 	public void onConnect() {
-		
-		System.out.println("Connection established");
-		socket.emit("joinroom", "Gult");
+		sendConnectionStatus(true);
 	}
 
 	@Override
@@ -146,12 +155,10 @@ public class DrawItService extends Service implements IOCallback {
 			try {
 				messenger.send(msg);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		
-
 
 
 }
