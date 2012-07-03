@@ -109,7 +109,11 @@ public class DrawItActivity extends Activity {
     	
         public void onServiceConnected(ComponentName className, IBinder service) {
             mBoundService = ((DrawItService.LocalBinder)service).getService();
-            mBoundService.connectWebsocket();
+			if (!mBoundService.socketConnected) {
+				mBoundService.socketConnected = true;
+				mBoundService.connectWebsocket();
+			}
+
             Log.d("J", "Binded successfully!");
             mBoundService.addMessenger(activityMessenger);
         }

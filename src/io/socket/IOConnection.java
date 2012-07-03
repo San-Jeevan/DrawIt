@@ -11,6 +11,7 @@ package io.socket;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
@@ -31,6 +32,7 @@ import javax.net.ssl.SSLSocketFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 /**
  * The Class IOConnection.
@@ -79,7 +81,7 @@ class IOConnection implements IOCallback {
 	private IOTransport transport;
 
 	/** The connection timeout. */
-	private int connectTimeout = 10000;
+	private int connectTimeout = 2000;
 
 	/** The session id of this connection. */
 	private String sessionId;
@@ -308,7 +310,16 @@ class IOConnection implements IOCallback {
 			heartbeatTimeout = Long.parseLong(data[1]) * 1000;
 			closingTimeout = Long.parseLong(data[2]) * 1000;
 			protocols = Arrays.asList(data[3].split(","));
-		} catch (Exception e) {
+			
+			
+		} 
+		catch (SocketTimeoutException e) { 
+			invalidateTransport();
+			handshake();
+			                   }
+		
+		
+		catch (Exception e) {
 			error(new SocketIOException("Error while handshaking", e));
 		}
 	}

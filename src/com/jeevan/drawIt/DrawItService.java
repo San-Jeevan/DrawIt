@@ -30,22 +30,22 @@ public class DrawItService extends Service implements IOCallback {
 	public boolean socketConnected = false;
 		
 	
-	
-	
+	  
 	private final BroadcastReceiver mNetworkStateReceiver = new BroadcastReceiver() {
 	    @Override
 	        public void onReceive(Context context, Intent intent) {
 	    	NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-	    	if (networkInfo.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) {
+
+	    	if (networkInfo==null||!networkInfo.isConnected()) {
 	    		socket.disconnect();
 	    		socketConnected=false;
 	    	}
-	    	else if  (networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
-	    		
-	    		if (socketConnected=false) {Log.d("INFO: ", "giii"); connectWebsocket();}
-	        }
-
-	
+	    	else {
+	    		if (!socketConnected) {
+	    			socketConnected=true;
+	    			connectWebsocket();
+	    			}
+	        } 
 	    }
 	};
 
@@ -61,6 +61,8 @@ public class DrawItService extends Service implements IOCallback {
 		this.messenger = messenger;
 	}
 	
+
+	
 	public void connectWebsocket () {
 		socket = new SocketIO();
 		try {
@@ -71,7 +73,6 @@ public class DrawItService extends Service implements IOCallback {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		socketConnected = true;
 	}
 	
 
